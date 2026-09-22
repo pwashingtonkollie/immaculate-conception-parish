@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Immaculate Conception Parish</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f3f4f6;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      margin: 20px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1f2937;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #166534;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #14532d;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    #message {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-container">
+
+    <div class="logo">⛪</div>
+
+    <h1>Immaculate Conception Parish</h1>
+
+    <p class="subtitle">Parish Management System</p>
+
+    <form id="loginForm">
+
+      <label for="email">Administrator Email</label>
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter your email"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+        required
+      >
+
+      <button type="submit" id="loginButton">
+        Login
+      </button>
+
+    </form>
+
+    <div id="message"></div>
+
+    <div class="footer">
+      Immaculate Conception Parish © 2026
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://cyymcqxoommqfrrnlmtb.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_EjEI5Tk8vGB6ofuRt0OJyg_AIucsYYS";
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+    const loginForm = document.getElementById("loginForm");
+    const loginButton = document.getElementById("loginButton");
+    const message = document.getElementById("message");
+
+    loginForm.addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      loginButton.disabled = true;
+      loginButton.textContent = "Logging in...";
+      message.textContent = "";
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+      if (error) {
+        message.style.color = "red";
+        message.textContent = error.message;
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
+        return;
+      }
+
+      const user = data.user;
+
+      const { data: profile, error: profileError } =
+        await supabaseClient
+          .from("user_profiles")
+          .select("full_name, role, is_active")
+          .eq("id", user.id)
+          .single();
+
+      if (profileError || !profile) {
+        await supabaseClient.auth.signOut();
+
+        message.style.color = "red";
+        message.textContent =
+          "User profile could not be found.";
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
+        return;
+      }
+
+      if (!profile.is_active) {
+        await supabaseClient.auth.signOut();
+
+        message.style.color = "red";
+        message.textContent =
+          "This account is inactive.";
+
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
+        return;
+      }
+
+      window.location.href = "dashboard.html";
+    });
+  </script>
+
+</body>
+  </html>
