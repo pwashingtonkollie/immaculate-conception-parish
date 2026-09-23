@@ -752,14 +752,391 @@ function viewParishioner(id) {
     .filter(Boolean)
     .join(" ");
 
-  alert(
-    "Parishioner Profile\n\n" +
-    "Name: " + fullName + "\n" +
-    "Sex: " + (person.sex || "") + "\n" +
-    "Phone: " + (person.phone || "") + "\n" +
-    "Nationality: " + (person.nationality || "") + "\n" +
-    "Status: " + (person.status || "")
-  );
+  const profileWindow = window.open("", "_blank");
+
+  profileWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${escapeHtml(fullName)} - Parishioner Profile</title>
+
+      <style>
+        body {
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background: #f4f6f8;
+          color: #333;
+        }
+
+        header {
+          background: #1b5e20;
+          color: white;
+          padding: 25px;
+          text-align: center;
+        }
+
+        .container {
+          max-width: 1000px;
+          margin: 30px auto;
+          padding: 20px;
+        }
+
+        .profile-card {
+          background: white;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-photo {
+          width: 150px;
+          height: 180px;
+          object-fit: cover;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          display: block;
+          margin: 0 auto 20px;
+        }
+
+        .no-photo {
+          width: 150px;
+          height: 180px;
+          background: #eeeeee;
+          border: 1px solid #ccc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 20px;
+          color: #777;
+        }
+
+        h2 {
+          color: #1b5e20;
+          border-bottom: 2px solid #1b5e20;
+          padding-bottom: 10px;
+        }
+
+        .name {
+          text-align: center;
+          font-size: 26px;
+          font-weight: bold;
+          margin-bottom: 30px;
+        }
+
+        .section {
+          margin-top: 30px;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 15px;
+        }
+
+        .field {
+          background: #f8f9fa;
+          padding: 12px;
+          border-radius: 6px;
+        }
+
+        .label {
+          font-size: 12px;
+          font-weight: bold;
+          color: #666;
+          margin-bottom: 5px;
+        }
+
+        .value {
+          font-size: 15px;
+        }
+
+        .buttons {
+          margin-top: 30px;
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        button {
+          border: none;
+          border-radius: 6px;
+          padding: 12px 22px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+
+        .back {
+          background: #777;
+          color: white;
+        }
+
+        .print {
+          background: #1565c0;
+          color: white;
+        }
+
+        @media print {
+          .buttons {
+            display: none;
+          }
+
+          body {
+            background: white;
+          }
+
+          .profile-card {
+            box-shadow: none;
+          }
+        }
+      </style>
+    </head>
+
+    <body>
+
+      <header>
+        <h1>Immaculate Conception Parish</h1>
+        <p>Parishioner Profile</p>
+      </header>
+
+      <div class="container">
+
+        <div class="profile-card">
+
+          ${
+            person.photo_url
+              ? `<img
+                  src="${escapeHtml(person.photo_url)}"
+                  class="profile-photo"
+                  alt="Parishioner Photo"
+                >`
+              : `<div class="no-photo">
+                  No Photo
+                </div>`
+          }
+
+          <div class="name">
+            ${escapeHtml(fullName)}
+          </div>
+
+          <div class="section">
+
+            <h2>Personal Information</h2>
+
+            <div class="grid">
+
+              <div class="field">
+                <div class="label">First Name</div>
+                <div class="value">
+                  ${escapeHtml(person.first_name || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Middle Name</div>
+                <div class="value">
+                  ${escapeHtml(person.middle_name || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Last Name</div>
+                <div class="value">
+                  ${escapeHtml(person.last_name || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Sex</div>
+                <div class="value">
+                  ${escapeHtml(person.sex || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Date of Birth</div>
+                <div class="value">
+                  ${escapeHtml(person.date_of_birth || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Place of Birth</div>
+                <div class="value">
+                  ${escapeHtml(person.place_of_birth || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">County of Origin</div>
+                <div class="value">
+                  ${escapeHtml(person.county_of_orgin || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Nationality</div>
+                <div class="value">
+                  ${escapeHtml(person.nationality || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Status</div>
+                <div class="value">
+                  ${escapeHtml(person.status || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Date Joined Parish</div>
+                <div class="value">
+                  ${escapeHtml(person.date_joined_parish || "")}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="section">
+
+            <h2>Contact Information</h2>
+
+            <div class="grid">
+
+              <div class="field">
+                <div class="label">Phone</div>
+                <div class="value">
+                  ${escapeHtml(person.phone || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Email</div>
+                <div class="value">
+                  ${escapeHtml(person.email || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Address</div>
+                <div class="value">
+                  ${escapeHtml(person.address || "")}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="section">
+
+            <h2>Sacrament Information</h2>
+
+            <div class="grid">
+
+              <div class="field">
+                <div class="label">Date of Baptism</div>
+                <div class="value">
+                  ${escapeHtml(person.date_of_baptism || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Place of Baptism</div>
+                <div class="value">
+                  ${escapeHtml(person["place of baptism"] || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">First Holy Communion Date</div>
+                <div class="value">
+                  ${escapeHtml(person["first_holy_communion _date"] || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">First Holy Communion Place</div>
+                <div class="value">
+                  ${
+                    Array.isArray(person.first_holy_communion_place)
+                      ? escapeHtml(person.first_holy_communion_place.join(", "))
+                      : escapeHtml(person.first_holy_communion_place || "")
+                  }
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="section">
+
+            <h2>Parish Information</h2>
+
+            <div class="grid">
+
+              <div class="field">
+                <div class="label">Dues ID</div>
+                <div class="value">
+                  ${escapeHtml(person.dues_id || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Tithe ID</div>
+                <div class="value">
+                  ${escapeHtml(person.tithe_id || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Organizations</div>
+                <div class="value">
+                  ${escapeHtml(person.organizations || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Children in Church</div>
+                <div class="value">
+                  ${escapeHtml(person.children_in_church || "")}
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="label">Notes</div>
+                <div class="value">
+                  ${escapeHtml(person.notes || "")}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="buttons">
+
+            <button
+              class="back"
+              onclick="window.close()">
+              Close Profile
+            </button>
+
+            <button
+              class="print"
+              onclick="window.print()">
+              Print Profile
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </body>
+    </html>
+  `);
+
+  profileWindow.document.close();
 }
 
 
