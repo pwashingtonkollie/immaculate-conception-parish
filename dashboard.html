@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,12 +21,14 @@
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 30px auto;
       padding: 20px;
     }
 
-    .welcome {
+    .welcome,
+    .section,
+    .form-container {
       background: white;
       padding: 25px;
       border-radius: 10px;
@@ -60,19 +61,18 @@
       font-weight: bold;
     }
 
-    .actions {
-      margin-bottom: 25px;
+    button {
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .add-button {
       background: #1b5e20;
       color: white;
-      border: none;
       padding: 14px 25px;
-      border-radius: 6px;
-      cursor: pointer;
       font-size: 16px;
-      font-weight: bold;
     }
 
     .add-button:hover {
@@ -81,16 +81,11 @@
 
     .form-container {
       display: none;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-bottom: 30px;
     }
 
-    .form-container h2 {
+    .form-container h2,
+    .section h2 {
       color: #1b5e20;
-      margin-top: 0;
       border-bottom: 2px solid #1b5e20;
       padding-bottom: 10px;
     }
@@ -149,28 +144,70 @@
     .save-button {
       background: #1b5e20;
       color: white;
-      border: none;
       padding: 13px 25px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
     }
 
     .cancel-button {
       background: #777;
       color: white;
-      border: none;
       padding: 13px 25px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 13px;
+      border: 1px solid #ccc;
       border-radius: 6px;
-      cursor: pointer;
+      font-size: 15px;
     }
 
-    .save-button:hover {
-      background: #124116;
+    .table-wrapper {
+      overflow-x: auto;
     }
 
-    .cancel-button:hover {
-      background: #555;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #1b5e20;
+      color: white;
+    }
+
+    tr:hover {
+      background: #f5f5f5;
+    }
+
+    .view-button {
+      background: #1565c0;
+      color: white;
+      padding: 8px 14px;
+    }
+
+    .view-button:hover {
+      background: #0d47a1;
+    }
+
+    .logout-button {
+      background: #b71c1c;
+      color: white;
+      padding: 12px 25px;
+      margin-top: 10px;
     }
 
     #message {
@@ -189,22 +226,14 @@
       color: #b71c1c;
     }
 
-    .logout-button {
-      background: #b71c1c;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 25px;
-    }
-
-    .logout-button:hover {
-      background: #8e0000;
-    }
-
     .required {
       color: #b71c1c;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 20px;
+      color: #777;
     }
   </style>
 </head>
@@ -389,14 +418,12 @@
 
         <div class="field full-width">
           <label>Organizations</label>
-          <textarea id="organizations"
-            placeholder="Example: Knights of St. Peter, CYO, Choir"></textarea>
+          <textarea id="organizations"></textarea>
         </div>
 
         <div class="field full-width">
           <label>Children in Church</label>
-          <textarea id="children_in_church"
-            placeholder="Enter names or information about children in the church"></textarea>
+          <textarea id="children_in_church"></textarea>
         </div>
 
         <div class="field full-width">
@@ -422,9 +449,57 @@
 
   </div>
 
+  <!-- PARISHIONERS LIST -->
+
+  <div class="section">
+
+    <h2>Parishioners</h2>
+
+    <div class="search-box">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by first name or last name..."
+        oninput="searchParishioners()"
+      >
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Sex</th>
+            <th>Phone</th>
+            <th>Nationality</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="parishionerTableBody">
+
+          <tr>
+            <td colspan="6" class="empty-message">
+              Loading parishioners...
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
   <p id="message"></p>
 
-  <button class="logout-button" onclick="logout()">Logout</button>
+  <button class="logout-button" onclick="logout()">
+    Logout
+  </button>
 
 </div>
 
@@ -443,6 +518,8 @@ const supabaseClient =
     SUPABASE_URL,
     SUPABASE_KEY
   );
+
+let allParishioners = [];
 
 
 async function loadDashboard() {
@@ -479,7 +556,8 @@ async function loadDashboard() {
 
   }
 
-  loadStatistics();
+  await loadStatistics();
+  await loadParishioners();
 }
 
 
@@ -533,6 +611,166 @@ async function loadStatistics() {
 
   document.getElementById("femaleParishioners").textContent =
     female;
+}
+
+
+async function loadParishioners() {
+
+  const { data, error } =
+    await supabaseClient
+      .from("parishioners")
+      .select(
+        "id, first_name, middle_name, last_name, sex, phone, nationality, status"
+      )
+      .order("last_name", { ascending: true });
+
+  if (error) {
+
+    document.getElementById("parishionerTableBody").innerHTML =
+      `<tr>
+        <td colspan="6" class="empty-message">
+          Unable to load parishioners: ${escapeHtml(error.message)}
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  allParishioners = data || [];
+
+  displayParishioners(allParishioners);
+}
+
+
+function displayParishioners(parishioners) {
+
+  const tableBody =
+    document.getElementById("parishionerTableBody");
+
+  if (!parishioners.length) {
+
+    tableBody.innerHTML =
+      `<tr>
+        <td colspan="6" class="empty-message">
+          No parishioners found.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  tableBody.innerHTML =
+    parishioners.map(person => {
+
+      const fullName =
+        [
+          person.first_name,
+          person.middle_name,
+          person.last_name
+        ]
+        .filter(Boolean)
+        .join(" ");
+
+      return `
+        <tr>
+
+          <td>${escapeHtml(fullName)}</td>
+
+          <td>${escapeHtml(person.sex || "")}</td>
+
+          <td>${escapeHtml(person.phone || "")}</td>
+
+          <td>${escapeHtml(person.nationality || "")}</td>
+
+          <td>${escapeHtml(person.status || "")}</td>
+
+          <td>
+            <button
+              class="view-button"
+              onclick="viewParishioner('${person.id}')">
+              View
+            </button>
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
+}
+
+
+function searchParishioners() {
+
+  const search =
+    document.getElementById("searchInput")
+      .value
+      .toLowerCase()
+      .trim();
+
+  if (!search) {
+
+    displayParishioners(allParishioners);
+
+    return;
+  }
+
+  const filtered =
+    allParishioners.filter(person => {
+
+      const first =
+        (person.first_name || "").toLowerCase();
+
+      const last =
+        (person.last_name || "").toLowerCase();
+
+      return (
+        first.includes(search) ||
+        last.includes(search)
+      );
+
+    });
+
+  displayParishioners(filtered);
+}
+
+
+function viewParishioner(id) {
+
+  const person =
+    allParishioners.find(
+      parishioner => parishioner.id === id
+    );
+
+  if (!person) return;
+
+  const fullName =
+    [
+      person.first_name,
+      person.middle_name,
+      person.last_name
+    ]
+    .filter(Boolean)
+    .join(" ");
+
+  alert(
+    "Parishioner Profile\n\n" +
+    "Name: " + fullName + "\n" +
+    "Sex: " + (person.sex || "") + "\n" +
+    "Phone: " + (person.phone || "") + "\n" +
+    "Nationality: " + (person.nationality || "") + "\n" +
+    "Status: " + (person.status || "")
+  );
+}
+
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
@@ -678,7 +916,8 @@ document.getElementById("addForm")
 
     hideForm();
 
-    loadStatistics();
+    await loadStatistics();
+    await loadParishioners();
 
   });
 
@@ -710,4 +949,3 @@ loadDashboard();
 
 </body>
 </html>
-```
