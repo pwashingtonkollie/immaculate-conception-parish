@@ -1142,23 +1142,390 @@ function viewParishioner(id) {
 
   profileWindow.document.close();
 }
-
 function editParishioner(id) {
 
-  const person =
-    allParishioners.find(
-      parishioner => parishioner.id === id
-    );
+  const person = allParishioners.find(
+    parishioner => parishioner.id === id
+  );
 
   if (!person) return;
 
-  alert("Edit form will open for " +
-    [
-      person.first_name,
-      person.middle_name,
-      person.last_name
-    ].filter(Boolean).join(" ")
-  );
+  const editWindow = window.open("", "_blank");
+
+  editWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Edit Parishioner</title>
+
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background: #f4f6f8;
+          margin: 0;
+        }
+
+        header {
+          background: #1b5e20;
+          color: white;
+          padding: 25px;
+          text-align: center;
+        }
+
+        .container {
+          max-width: 900px;
+          margin: 30px auto;
+          background: white;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+          color: #1b5e20;
+          border-bottom: 2px solid #1b5e20;
+          padding-bottom: 8px;
+          margin-top: 30px;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 15px;
+        }
+
+        label {
+          display: block;
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+
+        input,
+        select,
+        textarea {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          box-sizing: border-box;
+        }
+
+        textarea {
+          min-height: 90px;
+        }
+
+        .buttons {
+          margin-top: 30px;
+          display: flex;
+          gap: 10px;
+        }
+
+        button {
+          border: none;
+          border-radius: 6px;
+          padding: 12px 22px;
+          cursor: pointer;
+          font-weight: bold;
+        }
+
+        .save {
+          background: #2e7d32;
+          color: white;
+        }
+
+        .cancel {
+          background: #777;
+          color: white;
+        }
+      </style>
+    </head>
+
+    <body>
+
+      <header>
+        <h1>Immaculate Conception Parish</h1>
+        <p>Edit Parishioner</p>
+      </header>
+
+      <div class="container">
+
+        <form id="editForm">
+
+          <h2>Personal Information</h2>
+
+          <div class="grid">
+
+            <div>
+              <label>First Name</label>
+              <input
+                id="first_name"
+                value="${escapeHtml(person.first_name || "")}"
+                required>
+            </div>
+
+            <div>
+              <label>Middle Name</label>
+              <input
+                id="middle_name"
+                value="${escapeHtml(person.middle_name || "")}">
+            </div>
+
+            <div>
+              <label>Last Name</label>
+              <input
+                id="last_name"
+                value="${escapeHtml(person.last_name || "")}"
+                required>
+            </div>
+
+            <div>
+              <label>Sex</label>
+              <select id="sex">
+                <option value="">Select</option>
+                <option value="Male" ${person.sex === "Male" ? "selected" : ""}>Male</option>
+                <option value="Female" ${person.sex === "Female" ? "selected" : ""}>Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Date of Birth</label>
+              <input
+                type="date"
+                id="date_of_birth"
+                value="${person.date_of_birth || ""}">
+            </div>
+
+            <div>
+              <label>Place of Birth</label>
+              <input
+                id="place_of_birth"
+                value="${escapeHtml(person.place_of_birth || "")}">
+            </div>
+
+            <div>
+              <label>County of Origin</label>
+              <input
+                id="county_of_orgin"
+                value="${escapeHtml(person.county_of_orgin || "")}">
+            </div>
+
+            <div>
+              <label>Nationality</label>
+              <input
+                id="nationality"
+                value="${escapeHtml(person.nationality || "")}">
+            </div>
+
+            <div>
+              <label>Status</label>
+              <select id="status">
+                <option value="">Select</option>
+                <option value="Active" ${person.status === "Active" ? "selected" : ""}>Active</option>
+                <option value="Inactive" ${person.status === "Inactive" ? "selected" : ""}>Inactive</option>
+                <option value="Dead" ${person.status === "Dead" ? "selected" : ""}>Dead</option>
+                <option value="Relocation" ${person.status === "Relocation" ? "selected" : ""}>Relocation</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Date Joined Parish</label>
+              <input
+                type="date"
+                id="date_joined_parish"
+                value="${person.date_joined_parish || ""}">
+            </div>
+
+          </div>
+
+          <h2>Contact Information</h2>
+
+          <div class="grid">
+
+            <div>
+              <label>Phone</label>
+              <input
+                id="phone"
+                value="${escapeHtml(person.phone || "")}">
+            </div>
+
+            <div>
+              <label>Email</label>
+              <input
+                type="email"
+                id="email"
+                value="${escapeHtml(person.email || "")}">
+            </div>
+
+            <div>
+              <label>Address</label>
+              <input
+                id="address"
+                value="${escapeHtml(person.address || "")}">
+            </div>
+
+          </div>
+
+          <h2>Sacrament Information</h2>
+
+          <div class="grid">
+
+            <div>
+              <label>Date of Baptism</label>
+              <input
+                type="date"
+                id="date_of_baptism"
+                value="${person.date_of_baptism || ""}">
+            </div>
+
+            <div>
+              <label>Place of Baptism</label>
+              <input
+                id="place_of_baptism"
+                value="${escapeHtml(person["place of baptism"] || "")}">
+            </div>
+
+            <div>
+              <label>First Holy Communion Date</label>
+              <input
+                type="date"
+                id="first_holy_communion_date"
+                value="${person["first_holy_communion _date"] || ""}">
+            </div>
+
+            <div>
+              <label>First Holy Communion Place</label>
+              <input
+                id="first_holy_communion_place"
+                value="${
+                  Array.isArray(person.first_holy_communion_place)
+                    ? escapeHtml(person.first_holy_communion_place.join(", "))
+                    : escapeHtml(person.first_holy_communion_place || "")
+                }">
+            </div>
+
+          </div>
+
+          <h2>Parish Information</h2>
+
+          <div class="grid">
+
+            <div>
+              <label>Dues ID</label>
+              <input
+                id="dues_id"
+                value="${escapeHtml(person.dues_id || "")}">
+            </div>
+
+            <div>
+              <label>Tithe ID</label>
+              <input
+                id="tithe_id"
+                value="${escapeHtml(person.tithe_id || "")}">
+            </div>
+
+            <div>
+              <label>Organizations</label>
+              <input
+                id="organizations"
+                value="${escapeHtml(person.organizations || "")}">
+            </div>
+
+            <div>
+              <label>Children in Church</label>
+              <input
+                id="children_in_church"
+                value="${escapeHtml(person.children_in_church || "")}">
+            </div>
+
+          </div>
+
+          <h2>Notes</h2>
+
+          <textarea id="notes">${escapeHtml(person.notes || "")}</textarea>
+
+          <div class="buttons">
+
+            <button
+              type="button"
+              class="save"
+              onclick="saveEditedParishioner('${person.id}')">
+              Save Changes
+            </button>
+
+            <button
+              type="button"
+              class="cancel"
+              onclick="window.close()">
+              Cancel
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </body>
+    </html>
+  `);
+
+  editWindow.document.close();
+}
+async function saveEditedParishioner(id) {
+
+  const updatedData = {
+    first_name: document.getElementById("first_name").value.trim(),
+    middle_name: document.getElementById("middle_name").value.trim(),
+    last_name: document.getElementById("last_name").value.trim(),
+    sex: document.getElementById("sex").value,
+    date_of_birth: document.getElementById("date_of_birth").value || null,
+    place_of_birth: document.getElementById("place_of_birth").value.trim(),
+    county_of_orgin: document.getElementById("county_of_orgin").value.trim(),
+    nationality: document.getElementById("nationality").value.trim(),
+    status: document.getElementById("status").value,
+    date_joined_parish:
+      document.getElementById("date_joined_parish").value || null,
+
+    phone: document.getElementById("phone").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    address: document.getElementById("address").value.trim(),
+
+    "place of baptism":
+      document.getElementById("place_of_baptism").value.trim(),
+
+    "first_holy_communion _date":
+      document.getElementById("first_holy_communion_date").value || null,
+
+    first_holy_communion_place:
+      document.getElementById("first_holy_communion_place").value
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean),
+
+    dues_id: document.getElementById("dues_id").value.trim(),
+    tithe_id: document.getElementById("tithe_id").value.trim(),
+    organizations:
+      document.getElementById("organizations").value.trim(),
+    children_in_church:
+      document.getElementById("children_in_church").value.trim(),
+    notes: document.getElementById("notes").value.trim()
+  };
+
+  const { error } = await supabaseClient
+    .from("parishioners")
+    .update(updatedData)
+    .eq("id", id);
+
+  if (error) {
+    alert("Error saving changes: " + error.message);
+    return;
+  }
+
+  alert("Parishioner updated successfully!");
+
+  window.opener.loadParishioners();
+
+  window.close();
 }
 function escapeHtml(value) {
 
