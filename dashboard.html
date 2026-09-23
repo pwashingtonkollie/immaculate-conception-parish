@@ -533,7 +533,7 @@ async function loadDashboard() {
   }
 
   const user = sessionData.session.user;
-
+console.log("Logged-in user ID:", user.id);
   const { data: profile, error: profileError } =
     await supabaseClient
       .from("user_profiles")
