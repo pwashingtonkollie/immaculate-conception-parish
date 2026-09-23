@@ -619,9 +619,7 @@ async function loadParishioners() {
   const { data, error } =
     await supabaseClient
       .from("parishioners")
-      .select(
-        "id, first_name, middle_name, last_name, sex, phone, nationality, status"
-      )
+      .select("*")
       .order("last_name", { ascending: true });
 
   if (error) {
@@ -1125,6 +1123,12 @@ function viewParishioner(id) {
               onclick="window.print()">
               Print Profile
             </button>
+            
+            <button
+  class="edit"
+  onclick="editParishioner('${person.id}')">
+  Edit Parishioner
+</button>
 
           </div>
 
@@ -1139,7 +1143,23 @@ function viewParishioner(id) {
   profileWindow.document.close();
 }
 
+function editParishioner(id) {
 
+  const person =
+    allParishioners.find(
+      parishioner => parishioner.id === id
+    );
+
+  if (!person) return;
+
+  alert("Edit form will open for " +
+    [
+      person.first_name,
+      person.middle_name,
+      person.last_name
+    ].filter(Boolean).join(" ")
+  );
+}
 function escapeHtml(value) {
 
   return String(value)
