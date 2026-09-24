@@ -580,6 +580,10 @@ async function loadStatistics() {
 
     return;
   }
+  const { data: authCheck } =
+  await supabaseClient.auth.getSession();
+
+console.log("Dashboard session:", authCheck.session);
 console.log("Dashboard parishioners:", parishioners);
   document.getElementById("totalParishioners").textContent =
     parishioners.length;
