@@ -524,44 +524,44 @@ let allParishioners = [];
 
 async function loadDashboard() {
 
-  const { data: sessionData, error: sessionError } =
-    await supabaseClient.auth.getSession();
+  const { data: userData, error: userError } =
+    await supabaseClient.auth.getUser();
 
-  if (sessionError || !sessionData.session) {
+  if (userError || !userData.user) {
     window.location.href = "index.html";
     return;
   }
 
- const user = sessionData.session.user;
+  const user = userData.user;
 
-document.getElementById("welcomeText").textContent =
-  "Welcome to the Parish Dashboard";
+  document.getElementById("welcomeText").textContent =
+    "Loading administrator information...";
 
-const { data: profile, error: profileError } =
-  await supabaseClient
-    .from("user_profiles")
-    .select("full_name, role, is_active")
-    .eq("id", user.id)
-    .maybeSingle();
-  if (!profileError && profile) {
+  const { data: profile, error: profileError } =
+    await supabaseClient
+      .from("user_profiles")
+      .select("full_name, role, is_active")
+      .eq("id", user.id)
+      .maybeSingle();
 
+  if (profileError) {
+    console.error("Profile loading error:", profileError);
+    document.getElementById("welcomeText").textContent =
+      "Welcome to the Parish Dashboard";
+  } else if (profile) {
     document.getElementById("welcomeText").textContent =
       "Welcome, " +
       profile.full_name +
       " — Role: " +
       profile.role;
-
   } else {
-
     document.getElementById("welcomeText").textContent =
       "Welcome to the Parish Dashboard";
-
   }
 
   await loadStatistics();
   await loadParishioners();
-}
-
+  }
 
 async function loadStatistics() {
 
