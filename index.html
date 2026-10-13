@@ -1,226 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Immaculate Conception Parish - Dashboard</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-    }
-
-    header {
-      background: #1b5e20;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 20px;
-    }
-
-    .welcome {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .card h2 {
-      color: #1b5e20;
-      font-size: 36px;
-      margin: 10px 0;
-    }
-
-    .card p {
-      font-weight: bold;
-    }
-
-    button {
-      background: #b71c1c;
-      color: white;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 25px;
-    }
-
-    button:hover {
-      background: #8e0000;
-    }
-
-    #message {
-      margin-top: 20px;
-      color: #b71c1c;
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Immaculate Conception Parish — Login</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script defer src="js/auth.js"></script>
 </head>
-
-<body>
-
-<header>
-  <h1>Immaculate Conception Parish</h1>
-  <p>Parish Management System</p>
-</header>
-
-<div class="container">
-
-  <div class="welcome">
-    <h2>Parish Dashboard</h2>
-    <p id="welcomeText">Loading administrator information...</p>
-  </div>
-
-  <div class="cards">
-
-    <div class="card">
-      <h2 id="totalParishioners">0</h2>
-      <p>Total Parishioners</p>
-    </div>
-
-    <div class="card">
-      <h2 id="activeParishioners">0</h2>
-      <p>Active Parishioners</p>
-    </div>
-
-    <div class="card">
-      <h2 id="maleParishioners">0</h2>
-      <p>Male</p>
-    </div>
-
-    <div class="card">
-      <h2 id="femaleParishioners">0</h2>
-      <p>Female</p>
-    </div>
-
-  </div>
-
-  <p id="message"></p>
-
-  <button onclick="logout()">Logout</button>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-
-const SUPABASE_URL = "https://cyymcqxoommqfrrnlmtb.supabase.co";
-
-/* Your Supabase publishable key */
-const SUPABASE_KEY = "sb_publishable_EjEI5Tk8vGB6ofuRt0OJyg_AIucsYYS";
-
-const supabaseClient =
-  window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-
-async function loadDashboard() {
-
-  /* Check logged-in user */
-  const { data: sessionData, error: sessionError } =
-    await supabaseClient.auth.getSession();
-
-  if (sessionError || !sessionData.session) {
-    window.location.href = "index.html";
-    return;
-  }
-
-  const user = sessionData.session.user;
-
-  /* Load administrator profile */
-  const { data: profile, error: profileError } =
-    await supabaseClient
-      .from("user_profiles")
-      .select("full_name, role, is_active")
-      .eq("id", user.id)
-      .single();
-
-  if (!profileError && profile) {
-    document.getElementById("welcomeText").textContent =
-      "Welcome, " + profile.full_name +
-      " — Role: " + profile.role;
-  } else {
-    document.getElementById("welcomeText").textContent =
-      "Welcome to the Parish Dashboard";
-  }
-
-  /* Get parishioners */
-  const { data: parishioners, error } =
-    await supabaseClient
-      .from("parishioners")
-      .select("sex, status");
-
-  if (error) {
-    document.getElementById("message").textContent =
-      "Unable to load parishioner statistics.";
-    console.error(error);
-    return;
-  }
-
-  /* Total */
-  document.getElementById("totalParishioners").textContent =
-    parishioners.length;
-
-  /* Active */
-  const active = parishioners.filter(
-    person => person.status &&
-    person.status.toLowerCase() === "active"
-  ).length;
-
-  document.getElementById("activeParishioners").textContent = active;
-
-  /* Male */
-  const male = parishioners.filter(
-    person => person.sex &&
-    person.sex.toLowerCase() === "male"
-  ).length;
-
-  document.getElementById("maleParishioners").textContent = male;
-
-  /* Female */
-  const female = parishioners.filter(
-    person => person.sex &&
-    person.sex.toLowerCase() === "female"
-  ).length;
-
-  document.getElementById("femaleParishioners").textContent = female;
-}
-
-
-/* Logout */
-async function logout() {
-
-  await supabaseClient.auth.signOut();
-
-  window.location.href = "index.html";
-}
-
-
-/* Start dashboard */
-loadDashboard();
-
-</script>
-
+<body class="page-center">
+  <main class="card login-card">
+    <div class="church-mark" aria-hidden="true">✝</div>
+    <h1>Immaculate Conception Parish</h1>
+    <p class="subtitle">Parish Management System</p>
+    <form id="loginForm">
+      <label for="email">Administrator Email</label>
+      <input id="email" name="email" type="email" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button id="loginButton" type="submit">Log in</button>
+      <p id="loginMessage" class="message" role="status"></p>
+    </form>
+    <p class="small">Immaculate Conception Parish © 2026</p>
+  </main>
 </body>
 </html>
