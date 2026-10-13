@@ -1,6 +1,6 @@
 */ window.PARISH_CONFIG = {
   SUPABASE_URL: "https://cyymcqxoommqfrrnlmtb.supabase.co",
-  SUPABASE_PUBLISHABLE_KEY: " Psb_publishable_EjEI5Tk8vGB6ofuRt0OJyg_AlucsYY"
+  SUPABASE_PUBLISHABLE_KEY: "Psb_publishable_EjEI5Tk8vGB6ofuRt0OJyg_AlucsYY"
 };
 
 (function () {
