@@ -1,11 +1,6 @@
-/*
-  CONFIGURATION
-  Paste ONLY your Supabase Project URL and PUBLISHABLE (public) key below.
-  Never put a sb_secret_ key or service_role key in this file.
-*/
-window.PARISH_CONFIG = {
+*/ window.PARISH_CONFIG = {
   SUPABASE_URL: "https://cyymcqxoommqfrrnlmtb.supabase.co",
-  SUPABASE_PUBLISHABLE_KEY: "REPLACE_WITH_YOUR_CURRENT_SB_PUBLISHABLE_KEY"
+  SUPABASE_PUBLISHABLE_KEY: " Psb_publishable_EjEI5Tk8vGB6ofuRt0OJyg_AlucsYY"
 };
 
 (function () {
@@ -43,4 +38,3 @@ window.PARISH_CONFIG = {
     return;
   }
   window.parishSupabase = window.supabase.createClient(cfg.SUPABASE_URL, key);
-})();
